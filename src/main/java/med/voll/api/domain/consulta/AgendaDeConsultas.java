@@ -1,10 +1,13 @@
 package med.voll.api.domain.consulta;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import med.voll.api.controller.DadosCancelamentoConsulta;
 import med.voll.api.domain.ValidacaoException;
+import med.voll.api.domain.consulta.validacoes.ValidadorAgendamentoConsulta;
 import med.voll.api.domain.medico.Medico;
 import med.voll.api.domain.medico.MedicoRepository;
 import med.voll.api.domain.paciente.PacienteRepository;
@@ -20,8 +23,21 @@ public class AgendaDeConsultas {
     @Autowired
     private PacienteRepository pacienteRepository;
 
+    //Aplicação dos validadores
+    @Autowired
+    private List<ValidadorAgendamentoConsulta> validadores;
+
 
     public void agendar(DadosAgendamentoConsulta dados){
+
+        //percorrendo a lista de validadores e aplicando as validações
+        /**
+         * estamos aplicando 3 principios do SOLID - S O D 
+         * s - principio da responsabilidade unica, cada classe de validaçao tem sua responsabilidade
+         * o - principio aberto-fechado
+         * d - inversao de dependencias, ficamos dependendo de uma abstração
+         */
+        validadores.forEach(v -> v.validar(dados));
 
         if(!pacienteRepository.existsById(dados.idPaciente())){
             throw new ValidacaoException("Id informado do paciente não existe!");
