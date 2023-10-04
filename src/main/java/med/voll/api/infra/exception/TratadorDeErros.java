@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import jakarta.persistence.EntityNotFoundException;
-/*Essa classe será responsável por tratar os erros sem poluir os CONTROLLERS com try-cath repetids */
+/*Essa classe será responsável por tratar os erros sem poluir os CONTROLLERS com try-cath repetidos */
 //a seguinte notação do Spring Boot indica que essa classe irá tratar erros
 @RestControllerAdvice
 public class TratadorDeErros {
@@ -24,6 +24,12 @@ public class TratadorDeErros {
         var erros = ex.getFieldErrors();
 
         return ResponseEntity.badRequest().body(erros.stream().map(DadosErroValidacao::new).toList());
+    }
+
+    //@ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity tratarErrosRegraDeNegocio(ValidacaoException ex){
+
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
     private record DadosErroValidacao(String campo, String mensagem){
